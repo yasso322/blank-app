@@ -858,8 +858,13 @@ st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 # Show current URL for sharing
 data = load_data()
 
+# Display QR Code prominently
 st.markdown('<div class="online-section">', unsafe_allow_html=True)
-st.markdown('<div class="online-title">🔗 شارك هاد الرابط مع الدراري</div>', unsafe_allow_html=True)
+st.markdown('<div class="online-title">📱 مسح بالكاميرا وادخل!</div>', unsafe_allow_html=True)
+
+# Display QR code image
+st.image("qr_code.png", use_container_width=True)
+
 st.markdown("""
     <div style="
         background: rgba(0, 0, 0, 0.5);
@@ -872,23 +877,11 @@ st.markdown("""
         box-shadow: 0 0 50px rgba(255, 215, 0, 0.3), 0 0 100px rgba(255, 215, 0, 0.1);
     ">
         <div style="color: #ffd700; font-size: 1.5rem; font-weight: 900; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255,215,0,0.5);">
-            👇 انسخ هاد الرابط وشاركو
-        </div>
-        <div style="
-            background: rgba(255, 215, 0, 0.1);
-            border: 2px dashed #ffd700;
-            border-radius: 16px;
-            padding: 20px;
-            margin: 15px 0;
-            word-break: break-all;
-        ">
-            <span style="color: #ffd700; font-family: monospace; font-size: 1.3rem; font-weight: 700; letter-spacing: 1px;">
-                https://blank-app-py3yziqwt6f5ajvmubjdso.streamlit.app
-            </span>
+            👆 ولا مسح بالكاميرا!
         </div>
         <div style="color: rgba(255,255,255,0.6); font-size: 1rem; margin-top: 15px; line-height: 1.8;">
-            📱 <b>الدراري يفتحو هاد الرابط فتليفوناتهم</b><br>
-            📝 <b>يدخلو سمياتهم</b><br>
+            📱 <b>افتح الكاميرا ووجهها للQR Code</b><br>
+            🔗 <b>غادي يفتح الرابط مباشرة</b><br>
             🎮 <b>ويلعبو معاك Online!</b>
         </div>
     </div>
