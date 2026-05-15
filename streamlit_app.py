@@ -1,103 +1,157 @@
-
-import import streamlit as st
+import streamlit as st
 import random
 import json
 import os
 
-# إعدادات الصفحة
+# --- Page Config ---
 st.set_page_config(page_title="Chkoun L-Khrouf? PRO", page_icon="🐑", layout="centered")
 
-# [نفس الديزاين الرهيب ديالك مع إضافة لمسة للأحكام]
+# --- Database ديال الكلمات ---
+# هادو هما الكلمات اللي غيطلعو للناس العاديين
+WORDS_LIST = [
+    "الطاجين", "الكسكس", "البراد", "البحر", "جامع الفنا", "الدار البيضاء", 
+    "المسمن", "الحريرة", "حكيم زياش", "الموطور", "القهوة", "البغرير",
+    "القفطان", "البلغة", "التكشيطة", "الصحراء المغربية", "مراكش"
+]
+
+# --- CSS Design ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;600;700;900&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-    * { font-family: 'Noto Sans Arabic', sans-serif; }
-    .stApp { background: linear-gradient(-45deg, #0a0a0a, #1a1a2e, #16213e, #0f3460); background-size: 400% 400%; animation: gradientBG 15s ease infinite; background-attachment: fixed; }
-    @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-    .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; margin: 20px 0; border-right: 4px solid #ffd700; }
-    .game-title { text-align: center; font-size: clamp(2.5rem, 10vw, 4.5rem); font-weight: 900; color: #ffffff; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-    .stButton > button { width: 100%; background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%) !important; color: #000000 !important; border-radius: 20px !important; font-weight: 900 !important; padding: 15px !important; border: none !important; box-shadow: 0 10px 20px rgba(0,0,0,0.3) !important; }
-    .word-box { background: rgba(255, 215, 0, 0.1); border: 2px dashed #ffd700; border-radius: 20px; padding: 25px; text-align: center; margin: 15px 0; }
-    .secret-text { font-size: 2.2rem; font-weight: 900; color: #ffffff; }
-    .punishment-card { background: rgba(255, 68, 68, 0.1); border: 2px solid #ff4444; border-radius: 20px; padding: 20px; margin-top: 20px; text-align: center; }
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;900&display=swap');
+    * { font-family: 'Noto Sans Arabic', sans-serif; text-align: right; }
+    .stApp { background: #0e1117; }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        margin-bottom: 20px;
+    }
+    .secret-box {
+        background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+        color: black;
+        padding: 30px;
+        border-radius: 15px;
+        font-size: 2.5rem;
+        font-weight: 900;
+        text-align: center;
+        margin: 20px 0;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+    }
+    .imposter-box {
+        background: linear-gradient(135deg, #ff4b4b 0%, #8b0000 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        font-size: 2rem;
+        font-weight: 900;
+        text-align: center;
+        margin: 20px 0;
+    }
+    .name-tag {
+        background: #1e2130;
+        color: #ffd700;
+        padding: 8px 15px;
+        border-radius: 10px;
+        margin: 5px;
+        display: inline-block;
+        border: 1px solid #ffd700;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# لستة الكلمات ولستة الأحكام
-WORDS_DATABASE = ["طاجين", "براد د أتاي", "صندالة", "تليفون", "موتور", "بحر", "كسكس", "كاسكيطة", "طوبيس", "الوالدين"]
-PUNISHMENTS = ["☕ خلص القهوة", "🎤 غني أغنية شعبية", "🧼 غسل المواعن", "🕺 در رقصة 'Worm'", "📸 صور فيديو وقول 'أنا خروف'", "🤣 قول نكتة حامضة", "📞 عيط لشي واحد وقول ليه أنا خروف"]
-
+# --- Data Management ---
 DATA_FILE = "game_data.json"
 
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
-            with open(DATA_FILE, 'r', encoding='utf-8') as f: return json.load(f)
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
         except: pass
-    return {"players": [], "state": "setup", "word": "", "khrouf": "", "punishment": ""}
+    return {"players": [], "game_state": "waiting", "imposter": None, "secret_word": "", "revealed": []}
 
 def save_data(data):
-    with open(DATA_FILE, 'w', encoding='utf-8') as f: json.dump(data, f, ensure_ascii=False)
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+# --- App Interface ---
+st.markdown('<h1 style="text-align:center; color:#ffd700;">🐑 شكون الخروف؟</h1>', unsafe_allow_html=True)
 
 data = load_data()
 
-st.markdown('<div class="game-title">🐑 Chkoun L-Khrouf?</div>', unsafe_allow_html=True)
-st.markdown('<div style="text-align: center; color: #ffd700; letter-spacing: 2px; font-weight: bold;">💎 VIP IMPOSTER & PUNISH 💎</div>', unsafe_allow_html=True)
+# Initialize session
+if 'player_name' not in st.session_state:
+    st.session_state.player_name = ""
 
-# --- SETUP ---
-if data["state"] == "setup":
+# --- 1. Registration ---
+if not st.session_state.player_name:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    names_input = st.text_input("📝 دخل سميات الدراري (بفاصلة):", placeholder="Yassine, Adam, Simo...")
-    if st.button("🚀 بدا اللعبة"):
-        player_list = [n.strip() for n in names_input.split(',') if n.strip()]
-        if len(player_list) >= 3:
-            data.update({"players": player_list, "word": random.choice(WORDS_DATABASE), 
-                         "khrouf": random.choice(player_list), "state": "roles", 
-                         "punishment": random.choice(PUNISHMENTS)})
-            save_data(data)
+    name = st.text_input("دخل سميتك باش تبدا:", key="reg_name")
+    if st.button("انضمام للعبة 🎮"):
+        if name and name.strip():
+            if name not in data["players"]:
+                data["players"].append(name.strip())
+                save_data(data)
+            st.session_state.player_name = name.strip()
             st.rerun()
-        else: st.error("⚠️ خاص 3 د الناس على الأقل!")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- ROLES ---
-elif data["state"] == "roles":
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown('<div style="text-align: center; color: #888; margin-bottom: 20px;">🤫 كل واحد يكليكي على سميتو يشوف فالسكتة</div>', unsafe_allow_html=True)
-    for player in data["players"]:
-        with st.expander(f"👁️ أنا {player}"):
-            if player == data["khrouf"]:
-                st.markdown('<div class="word-box"><div style="color: #ff4444;">🤫 نتا هو</div><div class="secret-text">الخرووووف!</div></div>', unsafe_allow_html=True)
+else:
+    # Header Info
+    st.write(f"👤 أنت: **{st.session_state.player_name}**")
+    
+    # Display Players
+    players_html = "".join([f'<span class="name-tag">{p}</span>' for p in data["players"]])
+    st.markdown(f'<div class="glass-card">👥 الدراري اللي داخلين:<br>{players_html}</div>', unsafe_allow_html=True)
+
+    # --- 2. Host Controls ---
+    # أول واحد كيدخل هو اللي كيتحكم (أو تقدر تزيد Logic د الـ Host)
+    if len(data["players"]) > 0 and data["players"][0] == st.session_state.player_name:
+        st.markdown("### 👑 تحكم الـ Host")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🚀 توزيع الأدوار"):
+                data["imposter"] = random.choice(data["players"])
+                data["secret_word"] = random.choice(WORDS_LIST)
+                data["game_state"] = "playing"
+                data["revealed"] = []
+                save_data(data)
+                st.rerun()
+        with col2:
+            if st.button("🔄 ريستارت"):
+                save_data({"players": [], "game_state": "waiting", "imposter": None, "secret_word": "", "revealed": []})
+                st.session_state.player_name = ""
+                st.rerun()
+
+    # --- 3. Playing State ---
+    if data["game_state"] == "playing":
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        
+        # المرحلة فين كيشوف الكلمة
+        if st.session_state.player_name not in data["revealed"]:
+            st.warning("⚠️ يلاه، برك باش تشوف شكون أنت. رد بالك يشوفك شي واحد!")
+            if st.button("👁️ كشف الدور ديالي"):
+                data["revealed"].append(st.session_state.player_name)
+                save_data(data)
+                st.rerun()
+        else:
+            # هنا فين كاين اللوجيك اللي بغيتي
+            if st.session_state.player_name == data["imposter"]:
+                # الخروف ما كيشوف والو
+                st.markdown('<div class="imposter-box">🕵️ أنت هو الخروف!<br><span style="font-size:1.2rem; font-weight:normal;">ماكاينش الكلمة، حاول تعيق بيهم بلا ما يعرفوك.</span></div>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class="word-box"><div style="color: #ffd700;">الكلمة السرية:</div><div class="secret-text">{data["word"]}</div></div>', unsafe_allow_html=True)
-    if st.button("🏁 سالينا؟ بداو الهضرة!"):
-        data["state"] = "playing"; save_data(data); st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+                # الناس العاديين كيشوفو الكلمة
+                st.markdown(f'<div class="secret-box">الكلمة هي:<br>{data["secret_word"]}</div>', unsafe_allow_html=True)
+                st.info("💡 هضر على هاد الكلمة بلا ما تعطيها نيشان، باش الخروف ما يفرشهاش.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# --- PLAYING ---
-elif data["state"] == "playing":
-    st.markdown('<div class="glass-card" style="text-align: center;">', unsafe_allow_html=True)
-    st.markdown('<h2 style="color: #00ff88;">🔥 اللعبة شاعلة!</h2>', unsafe_allow_html=True)
-    st.write("بقاو تسولو بعضياتكم حتى تعيقو بالخروف")
-    if st.button("⚖️ كشف الخروف والحكم"):
-        data["state"] = "reveal"; save_data(data); st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+    # --- 4. Refresh Button ---
+    st.button("🔄 تحديث (Update)")
 
-# --- REVEAL ---
-elif data["state"] == "reveal":
-    st.markdown(f"""
-        <div class="glass-card" style="text-align: center;">
-            <div style="color: #ffd700; font-size: 1.2rem;">الخروف اللي تفرش هو:</div>
-            <div style="font-size: 4rem; font-weight: 900; color: #ff4444; font-family: 'Orbitron';">{data["khrouf"]}</div>
-            <div class="punishment-card">
-                <div style="color: #ff4444; font-weight: bold; text-transform: uppercase;">⚖️ الحكم عليه:</div>
-                <div style="font-size: 1.8rem; color: #fff; margin-top: 10px;">{data["punishment"]}</div>
-            </div>
-            <div style="margin-top: 25px; color: #888;">الكلمة كانت هي: <b>{data["word"]}</b></div>
-        </div>
-    """, unsafe_allow_html=True)
-    if st.button("🔄 لعبة جديدة"):
-        data = {"players": [], "state": "setup", "word": "", "khrouf": "", "punishment": ""}
-        save_data(data); st.rerun()
+    if data["game_state"] == "playing":
+        if st.button("🏁 كشف شكون الخروف"):
+            st.error(f"🐑 الخروف اللي كان بيناتنا هو: {data['imposter']}")
 
-st.markdown('<div style="text-align: center; color: rgba(255,255,255,0.1); font-size: 0.8rem; margin-top: 50px;">💎 Chkoun L-Khrouf? PRO | VIP Edition</div>', unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; color:gray; font-size:0.8rem;">Made for Drari 🐑 v2.0</p>', unsafe_allow_html=True)
