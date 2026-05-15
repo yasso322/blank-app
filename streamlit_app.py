@@ -1,4 +1,3 @@
-
 import streamlit as st
 import random
 from datetime import datetime
@@ -584,7 +583,7 @@ st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Title
 st.markdown('<div class="game-title">🐑 Chkoun L-Khrouf?</div>', unsafe_allow_html=True)
-st.markdown('<div class="game-subtitle">لعبة الدراري باش تعرف شكون هو الخروف ديال النهار</div>', unsafe_allow_html=True)
+st.markdown('<div class="game-subtitle">لعبة الدراري - اللي ما يكونش الخروف هو اللي يربح 100 نقطة!</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
@@ -699,9 +698,9 @@ elif st.session_state.page == 'result':
     if not st.session_state.scores_updated:
         for name in st.session_state.names:
             if name == st.session_state.winner:
-                update_score(name, 100)
+                update_score(name, 0)  # الخروف كياخد 0 (خسر)
             else:
-                update_score(name, 0)
+                update_score(name, 100)  # الباقيين كيربحو 100 نقطة
         st.session_state.scores_updated = True
 
     st.markdown(f"""
@@ -709,8 +708,8 @@ elif st.session_state.page == 'result':
             <span class="sheep-emoji">🐑</span>
             <div class="winner-label">الخروف ديال النهار هو</div>
             <div class="winner-name">{st.session_state.winner}</div>
-            <div style="color: #00ff88; font-size: 1rem; margin-top: 10px; font-weight: 700;">
-                ⭐ +100 نقطة!
+            <div style="color: #ff4444; font-size: 1rem; margin-top: 10px; font-weight: 700;">
+                ❌ 0 نقاط - الخروف خسر!
             </div>
             <div class="punishment-box">
                 <div class="punishment-label">الحكم ديالو:</div>
@@ -723,8 +722,8 @@ elif st.session_state.page == 'result':
     st.markdown(f'<div class="score-title">📊 نقاط الجولة رقم {st.session_state.round_number}</div>', unsafe_allow_html=True)
 
     for name in st.session_state.names:
-        points = 100 if name == st.session_state.winner else 0
-        points_class = "score-points" if points > 0 else "score-points negative"
+        points = 0 if name == st.session_state.winner else 100
+        points_class = "score-points negative" if points == 0 else "score-points"
         st.markdown(f"""
             <div class="score-item">
                 <span class="score-name">{name}</span>
