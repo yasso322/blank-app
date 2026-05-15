@@ -8,469 +8,645 @@ import time
 
 # Page configuration
 st.set_page_config(
-    page_title="Chkoun L-Khrouf? - ULTIMATE",
+    page_title="Chkoun L-Khrouf? PRO",
     page_icon="🐑",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# ULTIMATE CSS with animations, effects, glows
+# PRO CSS - Glassmorphism, Particles, 3D, Animations
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
     * {
         font-family: 'Noto Sans Arabic', sans-serif;
     }
 
+    /* Animated gradient background */
     .stApp {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+        background: linear-gradient(-45deg, #0a0a0a, #1a1a2e, #16213e, #0f3460, #1a1a2e, #0a0a0a);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
         background-attachment: fixed;
     }
 
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Hide defaults */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .stDeployButton {display: none;}
 
     .main-container {
-        max-width: 700px;
+        max-width: 800px;
         margin: 0 auto;
         padding: 20px;
     }
 
-    /* Animated title with glow */
-    .game-title {
-        text-align: center;
-        font-size: clamp(2.5rem, 10vw, 4rem);
-        font-weight: 900;
-        color: #ffffff;
-        margin-bottom: 10px;
-        text-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1);
-        letter-spacing: 2px;
-        animation: titleGlow 3s ease-in-out infinite;
+    /* Glassmorphism card base */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 30px;
+        margin: 20px 0;
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        transition: all 0.4s ease;
     }
 
-    @keyframes titleGlow {
-        0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1); }
-        50% { text-shadow: 0 0 30px rgba(255,255,255,0.5), 0 0 60px rgba(255,255,255,0.2), 0 0 80px rgba(255,215,0,0.1); }
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 
+            0 12px 40px rgba(0, 0, 0, 0.4),
+            0 0 60px rgba(255, 215, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    /* Animated title */
+    .game-title {
+        text-align: center;
+        font-size: clamp(2.5rem, 10vw, 4.5rem);
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 15px;
+        text-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.5),
+            0 0 40px rgba(255, 215, 0, 0.3),
+            0 0 80px rgba(255, 215, 0, 0.1);
+        letter-spacing: 3px;
+        animation: titleFloat 4s ease-in-out infinite;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    @keyframes titleFloat {
+        0%, 100% { 
+            transform: translateY(0);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.3);
+        }
+        50% { 
+            transform: translateY(-10px);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.5), 0 0 100px rgba(255, 215, 0, 0.2);
+        }
     }
 
     .game-subtitle {
         text-align: center;
-        font-size: clamp(1rem, 3vw, 1.3rem);
-        color: #888888;
-        margin-bottom: 30px;
-        font-weight: 400;
-        animation: fadeIn 2s ease-out;
+        font-size: clamp(1rem, 3vw, 1.4rem);
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 40px;
+        font-weight: 300;
+        letter-spacing: 2px;
+        animation: fadeInUp 1.5s ease-out;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-20px); }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Neon button */
+    /* 3D Button */
     .stButton > button {
         width: 100%;
-        background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%) !important;
+        background: linear-gradient(135deg, #ffd700 0%, #ffaa00 50%, #ffd700 100%) !important;
         color: #000000 !important;
         border: none !important;
-        border-radius: 16px !important;
-        padding: 20px 35px !important;
+        border-radius: 20px !important;
+        padding: 22px 40px !important;
         font-size: 1.3rem !important;
         font-weight: 900 !important;
         cursor: pointer !important;
         transition: all 0.3s ease !important;
         text-transform: none !important;
         margin-top: 20px !important;
-        box-shadow: 0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.1) !important;
-        animation: buttonPulse 2s ease-in-out infinite;
+        box-shadow: 
+            0 10px 30px rgba(255, 215, 0, 0.3),
+            0 0 60px rgba(255, 215, 0, 0.2),
+            inset 0 2px 0 rgba(255, 255, 255, 0.3) !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .stButton > button:hover::before {
+        left: 100%;
     }
 
     .stButton > button:hover {
-        transform: translateY(-3px) scale(1.02) !important;
-        box-shadow: 0 0 30px rgba(255,255,255,0.4), 0 0 60px rgba(255,215,0,0.2) !important;
-        background: linear-gradient(135deg, #ffd700 0%, #ffffff 100%) !important;
+        transform: translateY(-4px) scale(1.02) !important;
+        box-shadow: 
+            0 15px 40px rgba(255, 215, 0, 0.5),
+            0 0 80px rgba(255, 215, 0, 0.3),
+            inset 0 2px 0 rgba(255, 255, 255, 0.4) !important;
     }
 
-    @keyframes buttonPulse {
-        0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        50% { box-shadow: 0 0 30px rgba(255,255,255,0.4), 0 0 50px rgba(255,215,0,0.15); }
+    .stButton > button:active {
+        transform: translateY(0) scale(0.98) !important;
     }
 
-    /* Input with neon border */
+    /* Glass input */
     .stTextInput > div > div > input {
-        background-color: #1a1a1a !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(10px) !important;
         color: #ffffff !important;
-        border: 2px solid #333333 !important;
-        border-radius: 16px !important;
-        padding: 18px 22px !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 20px !important;
+        padding: 20px 24px !important;
         font-size: 1.2rem !important;
         text-align: right !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+        transition: all 0.4s ease !important;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
     }
 
     .stTextInput > div > div > input:focus {
         border-color: #ffd700 !important;
-        box-shadow: 0 0 20px rgba(255,215,0,0.3), 0 0 40px rgba(255,215,0,0.1) !important;
+        box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.2),
+            inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+        background: rgba(255, 255, 255, 0.08) !important;
     }
 
     .stTextInput > div > div > input::placeholder {
-        color: #555555 !important;
+        color: rgba(255, 255, 255, 0.3) !important;
     }
 
     .stTextInput > label {
-        color: #cccccc !important;
+        color: rgba(255, 255, 255, 0.7) !important;
         font-size: 1.1rem !important;
-        font-weight: 700 !important;
+        font-weight: 600 !important;
         text-align: right !important;
         display: block !important;
         margin-bottom: 10px !important;
     }
 
-    /* Result card with epic animation */
+    /* Result card - EPIC */
     .result-card {
-        background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
-        border: 2px solid #ffd700;
-        border-radius: 24px;
-        padding: 40px 30px;
+        background: rgba(255, 215, 0, 0.05);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 30px;
+        padding: 50px 40px;
         text-align: center;
         margin: 30px 0;
-        box-shadow: 0 0 30px rgba(255,215,0,0.2), 0 0 60px rgba(255,215,0,0.1);
-        animation: epicEntrance 1s ease-out, borderGlow 2s ease-in-out infinite;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.5),
+            0 0 100px rgba(255, 215, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: epicEntrance 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
     }
 
     @keyframes epicEntrance {
-        0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
-        50% { transform: scale(1.05) rotate(2deg); }
-        100% { opacity: 1; transform: scale(1) rotate(0); }
-    }
-
-    @keyframes borderGlow {
-        0%, 100% { box-shadow: 0 0 30px rgba(255,215,0,0.2); border-color: #ffd700; }
-        50% { box-shadow: 0 0 50px rgba(255,215,0,0.4), 0 0 80px rgba(255,215,0,0.2); border-color: #ffffff; }
+        0% { 
+            opacity: 0; 
+            transform: scale(0.3) rotate(-15deg) translateY(100px);
+            filter: blur(20px);
+        }
+        60% { 
+            transform: scale(1.05) rotate(2deg) translateY(-10px);
+            filter: blur(0);
+        }
+        100% { 
+            opacity: 1; 
+            transform: scale(1) rotate(0) translateY(0);
+        }
     }
 
     .winner-name {
-        font-size: clamp(3rem, 12vw, 5rem);
+        font-size: clamp(3rem, 14vw, 6rem);
         font-weight: 900;
         color: #ffd700;
-        margin: 20px 0;
-        text-shadow: 0 0 30px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.3);
+        margin: 25px 0;
+        text-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.6),
+            0 0 60px rgba(255, 215, 0, 0.4),
+            0 0 100px rgba(255, 215, 0, 0.2);
         line-height: 1.2;
         word-break: break-word;
-        animation: winnerPulse 1.5s ease-in-out infinite;
+        animation: winnerPulse 2s ease-in-out infinite;
+        font-family: 'Orbitron', sans-serif;
     }
 
     @keyframes winnerPulse {
-        0%, 100% { transform: scale(1); text-shadow: 0 0 30px rgba(255,215,0,0.5); }
-        50% { transform: scale(1.05); text-shadow: 0 0 50px rgba(255,215,0,0.8), 0 0 80px rgba(255,215,0,0.4); }
+        0%, 100% { 
+            transform: scale(1);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+        50% { 
+            transform: scale(1.08);
+            text-shadow: 0 0 50px rgba(255, 215, 0, 1), 0 0 100px rgba(255, 215, 0, 0.6), 0 0 150px rgba(255, 215, 0, 0.3);
+        }
     }
 
     .winner-label {
         font-size: 1.2rem;
-        color: #888888;
-        margin-bottom: 15px;
-        letter-spacing: 4px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 20px;
+        letter-spacing: 5px;
         text-transform: uppercase;
-        animation: fadeInUp 1s ease-out 0.5s both;
+        animation: fadeInUp 1s ease-out 0.3s both;
     }
 
-    /* Punishment box with style */
+    /* Punishment box */
     .punishment-box {
-        background: rgba(255,215,0,0.05);
-        border-radius: 20px;
-        padding: 25px;
-        margin-top: 30px;
-        border: 1px solid rgba(255,215,0,0.3);
-        animation: fadeInUp 1s ease-out 1s both;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border-radius: 24px;
+        padding: 30px;
+        margin-top: 35px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        animation: fadeInUp 1s ease-out 0.8s both;
     }
 
     .punishment-label {
-        font-size: 1rem;
-        color: #666666;
-        margin-bottom: 10px;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 12px;
+        letter-spacing: 2px;
     }
 
     .punishment-text {
-        font-size: clamp(1.5rem, 5vw, 2rem);
+        font-size: clamp(1.5rem, 5vw, 2.2rem);
         color: #ffffff;
-        font-weight: 900;
+        font-weight: 700;
         margin: 0;
-        text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
 
-    /* Sheep animation */
+    /* Sheep with 3D effect */
     .sheep-emoji {
-        font-size: clamp(4rem, 12vw, 6rem);
-        margin-bottom: 15px;
+        font-size: clamp(4rem, 14vw, 7rem);
+        margin-bottom: 20px;
         display: block;
-        animation: sheepDance 1s ease-in-out infinite;
+        animation: sheep3D 1.5s ease-in-out infinite;
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
     }
 
-    @keyframes sheepDance {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        25% { transform: translateY(-15px) rotate(-5deg); }
-        50% { transform: translateY(0) rotate(0deg); }
-        75% { transform: translateY(-10px) rotate(5deg); }
+    @keyframes sheep3D {
+        0%, 100% { 
+            transform: translateY(0) rotateY(0deg) scale(1);
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+        }
+        25% { 
+            transform: translateY(-20px) rotateY(-15deg) scale(1.1);
+            filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.8));
+        }
+        50% { 
+            transform: translateY(0) rotateY(0deg) scale(1);
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+        }
+        75% { 
+            transform: translateY(-15px) rotateY(15deg) scale(1.05);
+            filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.7));
+        }
     }
 
-    /* Names list */
+    /* Name tags with glass effect */
     .names-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 12px;
         justify-content: center;
-        margin: 20px 0;
-        padding: 20px;
-        background: rgba(255,255,255,0.03);
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.08);
+        margin: 25px 0;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .name-tag {
-        background: rgba(255,215,0,0.15);
+        background: rgba(255, 215, 0, 0.1);
+        backdrop-filter: blur(5px);
         color: #ffd700;
-        padding: 8px 16px;
-        border-radius: 25px;
-        font-size: 1rem;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 1.1rem;
         font-weight: 700;
-        border: 1px solid rgba(255,215,0,0.3);
-        animation: tagGlow 2s ease-in-out infinite;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+        transition: all 0.3s ease;
+        animation: tagGlow 3s ease-in-out infinite;
+    }
+
+    .name-tag:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+        background: rgba(255, 215, 0, 0.2);
     }
 
     @keyframes tagGlow {
-        0%, 100% { box-shadow: 0 0 5px rgba(255,215,0,0.2); }
-        50% { box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+        0%, 100% { box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1); }
+        50% { box-shadow: 0 4px 25px rgba(255, 215, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.2); }
     }
 
-    /* Score board */
+    /* Score board glass */
     .score-board {
-        background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
-        border: 1px solid #333333;
-        border-radius: 20px;
-        padding: 25px;
-        margin: 20px 0;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 30px;
+        margin: 25px 0;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     }
 
     .score-title {
         text-align: center;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         font-weight: 900;
         color: #ffffff;
-        margin-bottom: 20px;
-        text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        margin-bottom: 25px;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        letter-spacing: 2px;
     }
 
     .score-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 14px 18px;
-        margin: 10px 0;
-        background: rgba(255,255,255,0.03);
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.06);
-        transition: all 0.3s ease;
+        padding: 16px 20px;
+        margin: 12px 0;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: all 0.4s ease;
     }
 
     .score-item:hover {
-        background: rgba(255,255,255,0.06);
-        transform: translateX(-5px);
-        border-color: rgba(255,215,0,0.2);
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateX(-8px);
+        border-color: rgba(255, 215, 0, 0.2);
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.1);
     }
 
     .score-name {
         color: #ffffff;
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 
     .score-points {
         color: #00ff88;
         font-weight: 900;
-        font-size: 1.3rem;
-        text-shadow: 0 0 15px rgba(0,255,136,0.4);
+        font-size: 1.4rem;
+        text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
     }
 
     .score-points.negative {
         color: #ff4444;
-        text-shadow: 0 0 15px rgba(255,68,68,0.4);
+        text-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
     }
 
-    /* Player card */
+    /* Player card VIP */
     .player-card {
-        background: rgba(255,215,0,0.05);
-        border: 2px solid rgba(255,215,0,0.2);
-        border-radius: 20px;
-        padding: 25px;
-        margin: 15px 0;
+        background: rgba(255, 215, 0, 0.05);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 215, 0, 0.2);
+        border-radius: 24px;
+        padding: 30px;
+        margin: 20px 0;
         text-align: center;
-        animation: cardGlow 3s ease-in-out infinite;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 60px rgba(255, 215, 0, 0.1);
+        animation: cardFloat 4s ease-in-out infinite;
     }
 
-    @keyframes cardGlow {
-        0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-        50% { box-shadow: 0 0 40px rgba(255,215,0,0.2); }
+    @keyframes cardFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
     }
 
     .player-name {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 900;
         color: #ffd700;
-        text-shadow: 0 0 20px rgba(255,215,0,0.3);
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        font-family: 'Orbitron', sans-serif;
     }
 
     .player-status {
-        font-size: 1rem;
-        color: #888888;
-        margin-top: 8px;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 10px;
     }
 
     .host-badge {
-        background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+        background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
         color: #000000;
-        padding: 6px 16px;
-        border-radius: 25px;
-        font-size: 0.9rem;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-size: 1rem;
         font-weight: 900;
         display: inline-block;
-        margin-top: 12px;
-        box-shadow: 0 0 15px rgba(255,215,0,0.4);
+        margin-top: 15px;
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
 
-    /* Waiting animation */
-    .waiting-text {
-        text-align: center;
-        color: #666666;
-        font-size: 1.1rem;
-        margin: 25px 0;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { opacity: 0.5; }
-        50% { opacity: 1; }
-    }
-
-    /* Divider */
+    /* Divider with gradient */
     .divider {
         height: 2px;
-        background: linear-gradient(90deg, transparent, #ffd700, #ffffff, #ffd700, transparent);
-        margin: 30px 0;
-        box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 215, 0, 0.3), 
+            rgba(255, 255, 255, 0.5), 
+            rgba(255, 215, 0, 0.3), 
+            transparent
+        );
+        margin: 35px 0;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
     }
 
     /* Footer */
     .footer-text {
         text-align: center;
-        color: #444444;
+        color: rgba(255, 255, 255, 0.3);
         font-size: 0.9rem;
-        margin-top: 40px;
+        margin-top: 50px;
+        letter-spacing: 3px;
     }
 
     /* Online section */
     .online-section {
-        background: rgba(255,215,0,0.03);
-        border: 2px solid rgba(255,215,0,0.15);
-        border-radius: 20px;
-        padding: 25px;
-        margin: 20px 0;
-        animation: sectionGlow 3s ease-in-out infinite;
-    }
-
-    @keyframes sectionGlow {
-        0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.05); }
-        50% { box-shadow: 0 0 40px rgba(255,215,0,0.15); }
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 30px;
+        margin: 25px 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
 
     .online-title {
         color: #ffd700;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         font-weight: 900;
         text-align: center;
-        margin-bottom: 15px;
-        text-shadow: 0 0 10px rgba(255,215,0,0.3);
+        margin-bottom: 20px;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        letter-spacing: 2px;
     }
 
     .url-display {
-        background: #1a1a1a;
-        border: 2px solid #ffd700;
-        border-radius: 14px;
-        padding: 14px 18px;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 16px;
+        padding: 16px 20px;
         color: #ffd700;
-        font-family: monospace;
-        font-size: 0.9rem;
+        font-family: 'Orbitron', monospace;
+        font-size: 0.95rem;
         word-break: break-all;
         text-align: center;
-        margin: 10px 0;
-        box-shadow: 0 0 20px rgba(255,215,0,0.2);
+        margin: 15px 0;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+        letter-spacing: 1px;
     }
 
-    /* Countdown timer */
-    .timer {
-        font-size: 3rem;
-        font-weight: 900;
-        color: #ffd700;
+    /* Waiting animation */
+    .waiting-text {
         text-align: center;
-        text-shadow: 0 0 30px rgba(255,215,0,0.5);
-        animation: timerPulse 1s ease-in-out infinite;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1.2rem;
+        margin: 30px 0;
+        animation: pulse 2s infinite;
     }
 
-    @keyframes timerPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+    @keyframes pulse {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
     }
 
-    /* Confetti effect (CSS only) */
-    .confetti-container {
+    /* Chat glass */
+    .chat-message {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 14px 18px;
+        margin: 8px 0;
+        transition: all 0.3s ease;
+    }
+
+    .chat-message:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 215, 0, 0.2);
+        transform: translateX(5px);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+        .main-container { padding: 15px; }
+        .result-card { padding: 35px 25px; }
+        .score-board { padding: 25px 20px; }
+        .glass-card { padding: 25px 20px; }
+    }
+
+    /* Success/Error with glass */
+    .stSuccess {
+        background: rgba(0, 255, 136, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(0, 255, 136, 0.3) !important;
+        color: #00ff88 !important;
+        border-radius: 16px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 5px 20px rgba(0, 255, 136, 0.1) !important;
+    }
+
+    .stError {
+        background: rgba(255, 50, 50, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 50, 50, 0.3) !important;
+        color: #ff6666 !important;
+        border-radius: 16px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 5px 20px rgba(255, 50, 50, 0.1) !important;
+    }
+
+    /* Particle effect container */
+    .particles {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         pointer-events: none;
-        z-index: 9999;
+        z-index: -1;
         overflow: hidden;
     }
 
-    .confetti {
+    .particle {
         position: absolute;
-        width: 10px;
-        height: 10px;
-        animation: confettiFall 3s linear infinite;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 215, 0, 0.5);
+        border-radius: 50%;
+        animation: particleFloat 20s infinite;
     }
 
-    @keyframes confettiFall {
-        0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-    }
-
-    @media (max-width: 480px) {
-        .main-container { padding: 15px; }
-        .result-card { padding: 30px 20px; }
-        .score-board { padding: 20px 15px; }
-    }
-
-    .stSuccess {
-        background: rgba(0,255,136,0.1) !important;
-        border: 1px solid rgba(0,255,136,0.3) !important;
-        color: #00ff88 !important;
-        border-radius: 14px !important;
-        font-weight: 700 !important;
-    }
-
-    .stError {
-        background: rgba(255,50,50,0.1) !important;
-        border: 1px solid rgba(255,50,50,0.3) !important;
-        color: #ff6666 !important;
-        border-radius: 14px !important;
-        font-weight: 700 !important;
+    @keyframes particleFloat {
+        0%, 100% { 
+            transform: translateY(100vh) translateX(0);
+            opacity: 0;
+        }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { 
+            transform: translateY(-100px) translateX(100px);
+            opacity: 0;
+        }
     }
 </style>
+""", unsafe_allow_html=True)
+
+# Particles background
+st.markdown("""
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s; animation-duration: 15s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s; animation-duration: 20s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s; animation-duration: 18s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s; animation-duration: 22s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s; animation-duration: 16s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s; animation-duration: 19s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s; animation-duration: 21s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1.5s; animation-duration: 17s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4.5s; animation-duration: 23s;"></div>
+        <div class="particle" style="left: 15%; animation-delay: 6s; animation-duration: 14s;"></div>
+        <div class="particle" style="left: 25%; animation-delay: 7s; animation-duration: 25s;"></div>
+        <div class="particle" style="left: 35%; animation-delay: 3.5s; animation-duration: 20s;"></div>
+        <div class="particle" style="left: 45%; animation-delay: 5.5s; animation-duration: 18s;"></div>
+        <div class="particle" style="left: 55%; animation-delay: 8s; animation-duration: 22s;"></div>
+        <div class="particle" style="left: 65%; animation-delay: 2s; animation-duration: 16s;"></div>
+        <div class="particle" style="left: 75%; animation-delay: 6.5s; animation-duration: 19s;"></div>
+        <div class="particle" style="left: 85%; animation-delay: 4s; animation-duration: 21s;"></div>
+        <div class="particle" style="left: 5%; animation-delay: 7.5s; animation-duration: 24s;"></div>
+        <div class="particle" style="left: 95%; animation-delay: 1s; animation-duration: 15s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 9s; animation-duration: 20s;"></div>
+    </div>
 """, unsafe_allow_html=True)
 
 # Punishments list
@@ -666,7 +842,7 @@ def add_chat_message(name, message):
         "message": message,
         "time": datetime.now().strftime("%H:%M:%S")
     })
-    data["chat"] = data["chat"][-50:]  # Keep last 50 messages
+    data["chat"] = data["chat"][-50:]
     save_data(data)
 
 def get_chat():
@@ -701,49 +877,26 @@ if 'is_host' not in st.session_state:
     st.session_state.is_host = False
 if 'joined' not in st.session_state:
     st.session_state.joined = False
-if 'show_confetti' not in st.session_state:
-    st.session_state.show_confetti = False
 
 # Main container
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-# Title with animation
+# Title
 st.markdown('<div class="game-title">🐑 Chkoun L-Khrouf?</div>', unsafe_allow_html=True)
-st.markdown('<div class="game-subtitle">🎮 اللعبة اللي كتخلص الدراري يضحكو ويتسناو!</div>', unsafe_allow_html=True)
+st.markdown('<div class="game-subtitle">💎 VIP EDITION - اللعبة اللي كتخلص الدراري يضحكو</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# Confetti effect when result shown
-data = load_data()
-if data["game_state"] == "result" and data["winner"]:
-    st.markdown("""
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden;">
-            <div style="position: absolute; width: 10px; height: 10px; background: #ffd700; left: 10%; animation: confettiFall 3s linear infinite;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #ff4444; left: 20%; animation: confettiFall 2.5s linear infinite 0.5s;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #00ff88; left: 30%; animation: confettiFall 3.5s linear infinite 1s;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #ffd700; left: 40%; animation: confettiFall 2s linear infinite 0.3s;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #ff6b6b; left: 50%; animation: confettiFall 3s linear infinite 0.8s;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #4ecdc4; left: 60%; animation: confettiFall 2.8s linear infinite 0.2s;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #ffd700; left: 70%; animation: confettiFall 3.2s linear infinite 1.2s;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #ff4444; left: 80%; animation: confettiFall 2.3s linear infinite 0.6s;"></div>
-            <div style="position: absolute; width: 10px; height: 10px; background: #00ff88; left: 90%; animation: confettiFall 3.8s linear infinite 0.4s;"></div>
-        </div>
-        <style>
-            @keyframes confettiFall {
-                0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-                100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
 # Show current URL for sharing
+data = load_data()
+
 st.markdown('<div class="online-section">', unsafe_allow_html=True)
 st.markdown('<div class="online-title">🔗 شارك هاد الرابط مع الدراري</div>', unsafe_allow_html=True)
 st.markdown("""
     <div class="url-display">
         https://blank-app-py3yziqwt6f5ajvmubjdso.streamlit.app
     </div>
-    <div style="color: #666666; font-size: 0.85rem; text-align: center; margin-top: 10px;">
+    <div style="color: rgba(255,255,255,0.4); font-size: 0.85rem; text-align: center; margin-top: 15px;">
         💡 كل واحد يفتح هاد الرابط فتليفونو ويدخل سميتو!
     </div>
 """, unsafe_allow_html=True)
@@ -754,7 +907,7 @@ st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 # ====== JOIN GAME ======
 if not st.session_state.joined:
     st.markdown("""
-        <div style="text-align: right; color: #cccccc; font-size: 1.1rem; margin-bottom: 20px; font-weight: 700;">
+        <div style="text-align: right; color: rgba(255,255,255,0.7); font-size: 1.1rem; margin-bottom: 20px; font-weight: 700;">
             📝 دخل سميتك باش تلتحق باللعبة:
         </div>
     """, unsafe_allow_html=True)
@@ -812,7 +965,7 @@ else:
     # Show all players
     data = load_data()
 
-    st.markdown('<div class="score-board">', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(f'<div class="score-title">👥 اللاعبين ({len(data["players"])})</div>', unsafe_allow_html=True)
 
     if data["players"]:
@@ -823,7 +976,7 @@ else:
         st.markdown(tags_html, unsafe_allow_html=True)
     else:
         st.markdown("""
-            <div style="text-align: center; color: #666666; font-size: 0.9rem;">
+            <div style="text-align: center; color: rgba(255,255,255,0.4); font-size: 0.9rem;">
                 🔄 مازال ما كاين حتى لاعب...
             </div>
         """, unsafe_allow_html=True)
@@ -832,27 +985,22 @@ else:
 
     # CHAT SECTION
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown('<div class="score-title">💬 شات الدراري</div>', unsafe_allow_html=True)
 
     chat_messages = get_chat()
     if chat_messages:
         for msg in reversed(chat_messages[-10:]):
             st.markdown(f"""
-                <div style="
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid rgba(255,255,255,0.08);
-                    border-radius: 12px;
-                    padding: 10px 15px;
-                    margin: 5px 0;
-                ">
+                <div class="chat-message">
                     <span style="color: #ffd700; font-weight: 700;">{msg['name']}</span>
-                    <span style="color: #888888; font-size: 0.8rem;">({msg['time']})</span>
-                    <div style="color: #ffffff; margin-top: 3px;">{msg['message']}</div>
+                    <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">({msg['time']})</span>
+                    <div style="color: #ffffff; margin-top: 5px; font-size: 1rem;">{msg['message']}</div>
                 </div>
             """, unsafe_allow_html=True)
     else:
         st.markdown("""
-            <div style="text-align: center; color: #555555; font-size: 0.9rem; padding: 20px;">
+            <div style="text-align: center; color: rgba(255,255,255,0.3); font-size: 0.9rem; padding: 20px;">
                 💬 مازال ما كاين حتى رسالة... بدا انت!
             </div>
         """, unsafe_allow_html=True)
@@ -864,11 +1012,14 @@ else:
             add_chat_message(st.session_state.player_name, chat_input.strip())
             st.rerun()
 
+    st.markdown('</div>', unsafe_allow_html=True)
+
     # HOST CONTROLS
     if st.session_state.is_host:
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.markdown("""
-            <div style="text-align: center; color: #ffd700; font-size: 1.2rem; font-weight: 900; margin-bottom: 20px;">
+            <div style="text-align: center; color: #ffd700; font-size: 1.3rem; font-weight: 900; margin-bottom: 25px; text-shadow: 0 0 20px rgba(255,215,0,0.3);">
                 👑 تحكمات الـ Host
             </div>
         """, unsafe_allow_html=True)
@@ -900,6 +1051,8 @@ else:
                 st.success("✅ لعبة جديدة!")
                 st.rerun()
 
+        st.markdown('</div>', unsafe_allow_html=True)
+
     # SHOW RESULT
     if data["game_state"] == "result" and data["winner"]:
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
@@ -912,7 +1065,7 @@ else:
                     <span class="sheep-emoji">🐑</span>
                     <div class="winner-label">أنت هو الخروف ديال النهار!</div>
                     <div class="winner-name">{data["winner"]}</div>
-                    <div style="color: #ff4444; font-size: 1.2rem; margin-top: 15px; font-weight: 900;">
+                    <div style="color: #ff4444; font-size: 1.3rem; margin-top: 20px; font-weight: 900; text-shadow: 0 0 20px rgba(255,68,68,0.5);">
                         ❌ 0 نقاط - الخروف خسر!
                     </div>
                     <div class="punishment-box">
@@ -927,7 +1080,7 @@ else:
                     <span class="sheep-emoji">🏆</span>
                     <div class="winner-label">الخروف ديال النهار هو</div>
                     <div class="winner-name">{data["winner"]}</div>
-                    <div style="color: #00ff88; font-size: 1.2rem; margin-top: 15px; font-weight: 900;">
+                    <div style="color: #00ff88; font-size: 1.3rem; margin-top: 20px; font-weight: 900; text-shadow: 0 0 20px rgba(0,255,136,0.5);">
                         ⭐ +100 نقطة! ما كنتيش الخروف!
                     </div>
                     <div class="punishment-box">
@@ -938,8 +1091,8 @@ else:
             """, unsafe_allow_html=True)
 
         # Round scores
-        st.markdown('<div class="score-board">', unsafe_allow_html=True)
-        st.markdown(f'<div class="score-title">📊 نقاط الجولة رقم {data["round"]} - واو!</div>', unsafe_allow_html=True)
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        st.markdown(f'<div class="score-title">📊 نقاط الجولة رقم {data["round"]} - VIP!</div>', unsafe_allow_html=True)
 
         for name in data["players"]:
             points = 0 if name == data["winner"] else 100
@@ -959,12 +1112,12 @@ else:
             <div class="waiting-text">
                 ⏳ كنتظرو الـ Host باش يبدأ اللعبة...
                 <br>
-                <span style="font-size: 0.85rem;">💬 تقدر تكتب فالشات فاللي فوق!</span>
+                <span style="font-size: 0.9rem;">💬 تقدر تكتب فالشات فاللي فوق!</span>
             </div>
         """, unsafe_allow_html=True)
 
         if st.button("🔄 تحديث", use_container_width=True):
             st.rerun()
 
-st.markdown('<div class="footer-text">🔥 Made with ❤️ for the Drari | 🐑 Chkoun L-Khrouf? ULTIMATE 🔥</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer-text">💎 VIP EDITION | Made with ❤️ for the Drari | 🐑 Chkoun L-Khrouf? PRO</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
