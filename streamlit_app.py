@@ -861,11 +861,36 @@ data = load_data()
 st.markdown('<div class="online-section">', unsafe_allow_html=True)
 st.markdown('<div class="online-title">🔗 شارك هاد الرابط مع الدراري</div>', unsafe_allow_html=True)
 st.markdown("""
-    <div class="url-display">
-        https://blank-app-py3yziqwt6f5ajvmubjdso.streamlit.app
-    </div>
-    <div style="color: rgba(255,255,255,0.4); font-size: 0.85rem; text-align: center; margin-top: 15px;">
-        💡 كل واحد يفتح هاد الرابط فتليفونو ويدخل سميتو!
+    <div style="
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        border: 3px solid #ffd700;
+        border-radius: 20px;
+        padding: 25px;
+        margin: 20px 0;
+        text-align: center;
+        box-shadow: 0 0 50px rgba(255, 215, 0, 0.3), 0 0 100px rgba(255, 215, 0, 0.1);
+    ">
+        <div style="color: #ffd700; font-size: 1.5rem; font-weight: 900; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255,215,0,0.5);">
+            👇 انسخ هاد الرابط وشاركو
+        </div>
+        <div style="
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px dashed #ffd700;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            word-break: break-all;
+        ">
+            <span style="color: #ffd700; font-family: monospace; font-size: 1.3rem; font-weight: 700; letter-spacing: 1px;">
+                https://blank-app-py3yziqwt6f5ajvmubjdso.streamlit.app
+            </span>
+        </div>
+        <div style="color: rgba(255,255,255,0.6); font-size: 1rem; margin-top: 15px; line-height: 1.8;">
+            📱 <b>الدراري يفتحو هاد الرابط فتليفوناتهم</b><br>
+            📝 <b>يدخلو سمياتهم</b><br>
+            🎮 <b>ويلعبو معاك Online!</b>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
