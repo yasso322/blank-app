@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 import json
 import os
-import time
 
 # Page configuration
 st.set_page_config(
@@ -14,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# PRO CSS - Glassmorphism, Particles, 3D, Animations
+# ULTIMATE CSS - Glassmorphism, Particles, 3D, Animations
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;600;700;900&display=swap');
@@ -541,23 +540,6 @@ st.markdown("""
         50% { opacity: 1; }
     }
 
-    /* Chat glass */
-    .chat-message {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        padding: 14px 18px;
-        margin: 8px 0;
-        transition: all 0.3s ease;
-    }
-
-    .chat-message:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 215, 0, 0.2);
-        transform: translateX(5px);
-    }
-
     /* Responsive */
     @media (max-width: 480px) {
         .main-container { padding: 15px; }
@@ -817,15 +799,15 @@ def load_data():
             with open(DATA_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except:
-            return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []}
-    return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []}
+            return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0}
+    return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0}
 
 def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def reset_game_data():
-    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []})
+    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0})
 
 def add_player(name):
     data = load_data()
@@ -834,20 +816,6 @@ def add_player(name):
         save_data(data)
         return True
     return False
-
-def add_chat_message(name, message):
-    data = load_data()
-    data["chat"].append({
-        "name": name,
-        "message": message,
-        "time": datetime.now().strftime("%H:%M:%S")
-    })
-    data["chat"] = data["chat"][-50:]
-    save_data(data)
-
-def get_chat():
-    data = load_data()
-    return data["chat"]
 
 def pick_sheep():
     data = load_data()
@@ -868,7 +836,7 @@ def reset_round():
     save_data(data)
 
 def new_game():
-    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []})
+    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0})
 
 # Initialize session state
 if 'player_name' not in st.session_state:
@@ -883,7 +851,7 @@ st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Title
 st.markdown('<div class="game-title">🐑 Chkoun L-Khrouf?</div>', unsafe_allow_html=True)
-st.markdown('<div class="game-subtitle">💎 VIP EDITION - اللعبة اللي كتخلص الدراري يضحكو</div>', unsafe_allow_html=True)
+st.markdown('<div class="game-subtitle">💎 VIP EDITION - PRO DESIGN</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
@@ -980,37 +948,6 @@ else:
                 🔄 مازال ما كاين حتى لاعب...
             </div>
         """, unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # CHAT SECTION
-    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown('<div class="score-title">💬 شات الدراري</div>', unsafe_allow_html=True)
-
-    chat_messages = get_chat()
-    if chat_messages:
-        for msg in reversed(chat_messages[-10:]):
-            st.markdown(f"""
-                <div class="chat-message">
-                    <span style="color: #ffd700; font-weight: 700;">{msg['name']}</span>
-                    <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">({msg['time']})</span>
-                    <div style="color: #ffffff; margin-top: 5px; font-size: 1rem;">{msg['message']}</div>
-                </div>
-            """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-            <div style="text-align: center; color: rgba(255,255,255,0.3); font-size: 0.9rem; padding: 20px;">
-                💬 مازال ما كاين حتى رسالة... بدا انت!
-            </div>
-        """, unsafe_allow_html=True)
-
-    # Chat input
-    chat_input = st.text_input("💬 بعت رسالة:", placeholder="كتب شي حاجة...", key="chat_input")
-    if st.button("📨 بعت", use_container_width=True):
-        if chat_input and chat_input.strip():
-            add_chat_message(st.session_state.player_name, chat_input.strip())
-            st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1112,7 +1049,7 @@ else:
             <div class="waiting-text">
                 ⏳ كنتظرو الـ Host باش يبدأ اللعبة...
                 <br>
-                <span style="font-size: 0.9rem;">💬 تقدر تكتب فالشات فاللي فوق!</span>
+                <span style="font-size: 0.9rem;">🔄 كليك تحديث باش تشوف التغييرات</span>
             </div>
         """, unsafe_allow_html=True)
 
