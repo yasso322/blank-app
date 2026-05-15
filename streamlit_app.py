@@ -1,3 +1,4 @@
+
 import streamlit as st
 import random
 from datetime import datetime
@@ -6,13 +7,13 @@ import os
 
 # Page configuration
 st.set_page_config(
-    page_title="Chkoun L-Khrouf?",
+    page_title="Chkoun L-Khrouf? - Multiplayer",
     page_icon="🐑",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for All Black Aesthetic + Darija + Responsive
+# Custom CSS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
@@ -104,10 +105,6 @@ st.markdown("""
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 30px rgba(255,255,255,0.25) !important;
         background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%) !important;
-    }
-
-    .stButton > button:active {
-        transform: translateY(0) !important;
     }
 
     .result-card {
@@ -245,16 +242,6 @@ st.markdown("""
         text-shadow: 0 0 10px rgba(255,68,68,0.3);
     }
 
-    .round-info {
-        text-align: center;
-        color: #666666;
-        font-size: 0.9rem;
-        margin: 15px 0;
-        padding: 10px;
-        background: rgba(255,255,255,0.02);
-        border-radius: 10px;
-    }
-
     .divider {
         height: 1px;
         background: linear-gradient(90deg, transparent, #333333, transparent);
@@ -266,26 +253,6 @@ st.markdown("""
         color: #444444;
         font-size: 0.8rem;
         margin-top: 40px;
-    }
-
-    @media (max-width: 480px) {
-        .main-container { padding: 15px; }
-        .result-card { padding: 30px 20px; }
-        .score-board { padding: 20px 15px; }
-    }
-
-    .stSuccess {
-        background: rgba(255,255,255,0.05) !important;
-        border: 1px solid rgba(255,255,255,0.1) !important;
-        color: #ffffff !important;
-        border-radius: 12px !important;
-    }
-
-    .stError {
-        background: rgba(255,50,50,0.1) !important;
-        border: 1px solid rgba(255,50,50,0.2) !important;
-        color: #ff6666 !important;
-        border-radius: 12px !important;
     }
 
     .online-section {
@@ -316,10 +283,75 @@ st.markdown("""
         text-align: center;
         margin: 10px 0;
     }
+
+    .player-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        padding: 20px;
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .player-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .player-status {
+        font-size: 0.9rem;
+        color: #888888;
+        margin-top: 5px;
+    }
+
+    .host-badge {
+        background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+        color: #000000;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .waiting-text {
+        text-align: center;
+        color: #666666;
+        font-size: 1rem;
+        margin: 20px 0;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+    }
+
+    @media (max-width: 480px) {
+        .main-container { padding: 15px; }
+        .result-card { padding: 30px 20px; }
+        .score-board { padding: 20px 15px; }
+    }
+
+    .stSuccess {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: #ffffff !important;
+        border-radius: 12px !important;
+    }
+
+    .stError {
+        background: rgba(255,50,50,0.1) !important;
+        border: 1px solid rgba(255,50,50,0.2) !important;
+        color: #ff6666 !important;
+        border-radius: 12px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Punishments list - NO nested quotes, NO apostrophes inside strings
+# Punishments list
 PUNISHMENTS = [
     "☕ خلص القهوة للجميع",
     "🧼 غسل المواعن كاملين",
@@ -478,304 +510,267 @@ PUNISHMENTS = [
     "🏆 قول انا الأسطورة بصوت عالي",
 ]
 
-# File for persistent scores
-SCORES_FILE = "scores.json"
+# File for persistent data
+DATA_FILE = "game_data.json"
 
-def load_scores():
-    if os.path.exists(SCORES_FILE):
+def load_data():
+    if os.path.exists(DATA_FILE):
         try:
-            with open(SCORES_FILE, 'r', encoding='utf-8') as f:
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except:
-            return {}
-    return {}
+            return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0}
+    return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0}
 
-def save_scores(scores):
-    with open(SCORES_FILE, 'w', encoding='utf-8') as f:
-        json.dump(scores, f, ensure_ascii=False, indent=2)
+def save_data(data):
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
-def update_score(name, points):
-    scores = load_scores()
-    if name not in scores:
-        scores[name] = {"total": 0, "wins": 0, "losses": 0, "history": []}
+def reset_game_data():
+    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0})
 
-    scores[name]["total"] += points
-    if points > 0:
-        scores[name]["wins"] += 1
-    else:
-        scores[name]["losses"] += 1
+def add_player(name):
+    data = load_data()
+    if name not in data["players"]:
+        data["players"].append(name)
+        save_data(data)
+        return True
+    return False
 
-    scores[name]["history"].append({
-        "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "points": points
-    })
+def pick_sheep():
+    data = load_data()
+    if len(data["players"]) >= 2:
+        data["winner"] = random.choice(data["players"])
+        data["punishment"] = random.choice(PUNISHMENTS)
+        data["game_state"] = "result"
+        data["round"] += 1
+        save_data(data)
+        return data["winner"], data["punishment"]
+    return None, None
 
-    scores[name]["history"] = scores[name]["history"][-50:]
-
-    save_scores(scores)
-    return scores
-
-def get_leaderboard():
-    scores = load_scores()
-    leaderboard = []
-    for name, data in scores.items():
-        leaderboard.append({
-            "name": name,
-            "total": data["total"],
-            "wins": data["wins"],
-            "losses": data["losses"]
-        })
-    leaderboard.sort(key=lambda x: x["total"], reverse=True)
-    return leaderboard
-
-def reset_all_scores():
-    if os.path.exists(SCORES_FILE):
-        os.remove(SCORES_FILE)
-
-# Initialize session state
-if 'page' not in st.session_state:
-    st.session_state.page = 'input'
-if 'names' not in st.session_state:
-    st.session_state.names = []
-if 'winner' not in st.session_state:
-    st.session_state.winner = None
-if 'punishment' not in st.session_state:
-    st.session_state.punishment = None
-if 'round_history' not in st.session_state:
-    st.session_state.round_history = []
-if 'round_number' not in st.session_state:
-    st.session_state.round_number = 0
-if 'scores_updated' not in st.session_state:
-    st.session_state.scores_updated = False
-
-def reset_game():
-    st.session_state.page = 'input'
-    st.session_state.winner = None
-    st.session_state.punishment = None
-    st.session_state.scores_updated = False
+def reset_round():
+    data = load_data()
+    data["game_state"] = "waiting"
+    data["winner"] = None
+    data["punishment"] = None
+    save_data(data)
 
 def new_game():
-    st.session_state.page = 'input'
-    st.session_state.names = []
-    st.session_state.winner = None
-    st.session_state.punishment = None
-    st.session_state.round_history = []
-    st.session_state.round_number = 0
-    st.session_state.scores_updated = False
+    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0})
 
-def pick_winner():
-    if st.session_state.names:
-        st.session_state.winner = random.choice(st.session_state.names)
-        st.session_state.punishment = random.choice(PUNISHMENTS)
-        st.session_state.page = 'result'
-        st.session_state.round_number += 1
-        st.session_state.scores_updated = False
-
-        st.session_state.round_history.append({
-            'round': st.session_state.round_number,
-            'winner': st.session_state.winner,
-            'punishment': st.session_state.punishment,
-            'time': datetime.now().strftime("%H:%M:%S")
-        })
+# Initialize session state for UI
+if 'player_name' not in st.session_state:
+    st.session_state.player_name = ""
+if 'is_host' not in st.session_state:
+    st.session_state.is_host = False
+if 'joined' not in st.session_state:
+    st.session_state.joined = False
 
 # Main container
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Title
 st.markdown('<div class="game-title">🐑 Chkoun L-Khrouf?</div>', unsafe_allow_html=True)
-st.markdown('<div class="game-subtitle">لعبة الدراري - اللي ما يكونش الخروف هو اللي يربح 100 نقطة!</div>', unsafe_allow_html=True)
+st.markdown('<div class="game-subtitle">كل واحد يدخل سميتو من تليفونو ونتوما تلعبو!</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# ====== SCORE BOARD ======
-leaderboard = get_leaderboard()
-if leaderboard:
-    st.markdown('<div class="score-board">', unsafe_allow_html=True)
-    st.markdown('<div class="score-title">🏆 لائحة النقاط</div>', unsafe_allow_html=True)
+# Show current URL for sharing
+data = load_data()
 
-    for i, player in enumerate(leaderboard[:10]):
-        crown = "👑" if i == 0 else ""
-        medal = "🥇" if i == 0 else "🥈" if i == 1 else "🥉" if i == 2 else "•"
-
-        st.markdown(f"""
-            <div class="score-item">
-                <span class="score-name">{medal} {player['name']} {crown}</span>
-                <span class="score-points">{player['total']} نقطة</span>
-            </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ====== ONLINE PLAY SECTION ======
 st.markdown('<div class="online-section">', unsafe_allow_html=True)
-st.markdown('<div class="online-title">🌐 كيفاش تلعبو Online مع الدراري؟</div>', unsafe_allow_html=True)
-
+st.markdown('<div class="online-title">🔗 شارك هاد الرابط مع الدراري</div>', unsafe_allow_html=True)
 st.markdown("""
-    <div style="color: #aaaaaa; font-size: 0.9rem; line-height: 1.8; text-align: center;">
-        <p>1️⃣ شغل التطبيق فـ PC ديالك</p>
-        <p>2️⃣ شارك الرابط مع الدراري</p>
-        <p>3️⃣ كلو يدخل من تليفونو ويلعبو!</p>
+    <div class="url-display">
+        https://blank-app-py3yziqwt6f5ajvmubjdso.streamlit.app
+    </div>
+    <div style="color: #666666; font-size: 0.8rem; text-align: center; margin-top: 10px;">
+        💡 كل واحد يفتح هاد الرابط فتليفونو ويدخل سميتو
     </div>
 """, unsafe_allow_html=True)
-
-st.markdown("""
-    <div style="margin-top: 15px;">
-        <div style="color: #888888; font-size: 0.85rem; text-align: center; margin-bottom: 5px;">
-            🔗 الرابط ديالك (Local Network):
-        </div>
-        <div class="url-display">
-            http://localhost:8501
-        </div>
-        <div style="color: #666666; font-size: 0.8rem; text-align: center; margin-top: 10px;">
-            💡 بش تعرف IP ديالك: افتح CMD وكتب ipconfig (Windows) أو ifconfig (Mac/Linux)
-        </div>
-    </div>
-""", unsafe_allow_html=True)
-
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# ====== INPUT PAGE ======
-if st.session_state.page == 'input':
+# ====== JOIN GAME ======
+if not st.session_state.joined:
     st.markdown("""
         <div style="text-align: right; color: #cccccc; font-size: 1rem; margin-bottom: 20px; font-weight: 600;">
-            📝 دخل سميات الدراري (بفاصلة):
+            📝 دخل سميتك باش تلتحق باللعبة:
         </div>
     """, unsafe_allow_html=True)
 
-    names_input = st.text_input(
+    player_name = st.text_input(
         "",
-        placeholder="مثلاً: Yassine, Adam, Simo, Omar, Karim...",
-        key="names_input",
+        placeholder="مثلاً: Yassine, Adam, Simo...",
+        key="player_input",
         label_visibility="collapsed"
     )
 
-    if names_input:
-        raw_names = [name.strip() for name in names_input.split(',') if name.strip()]
-        seen = set()
-        st.session_state.names = []
-        for name in raw_names:
-            if name not in seen:
-                seen.add(name)
-                st.session_state.names.append(name)
+    col1, col2 = st.columns(2)
 
-        if st.session_state.names:
-            tags_html = '<div class="names-list">'
-            for name in st.session_state.names:
-                tags_html += f'<span class="name-tag">{name}</span>'
-            tags_html += '</div>'
-            st.markdown(tags_html, unsafe_allow_html=True)
-
-            st.markdown(f"""
-                <div style="text-align: center; color: #666666; font-size: 0.9rem; margin: 10px 0;">
-                    👥 {len(st.session_state.names)} دراري مشاركين
-                </div>
-            """, unsafe_allow_html=True)
-
-    if st.session_state.round_number > 0:
-        st.markdown(f"""
-            <div class="round-info">
-                🎮 الجولة رقم {st.session_state.round_number} | 📊 {len(st.session_state.round_history)} لعبة لعبو
-            </div>
-        """, unsafe_allow_html=True)
-
-    if st.session_state.names and len(st.session_state.names) >= 2:
-        if st.button("🔍 شكون هو الخروف؟", key="pick_btn", use_container_width=True):
-            pick_winner()
-            st.rerun()
-    elif st.session_state.names and len(st.session_state.names) < 2:
-        st.error("⚠️ خاص يكونو جوج على الأقل!")
-    else:
-        st.markdown("""
-            <div style="text-align: center; color: #444444; font-size: 0.9rem; margin-top: 30px;">
-                👆 دخل سميات الدراري باش نبدأو اللعبة
-            </div>
-        """, unsafe_allow_html=True)
-
-# ====== RESULT PAGE ======
-elif st.session_state.page == 'result':
-    if not st.session_state.scores_updated:
-        for name in st.session_state.names:
-            if name == st.session_state.winner:
-                update_score(name, 0)  # الخروف كياخد 0 (خسر)
+    with col1:
+        if st.button("🎮 انضم للعبة", use_container_width=True):
+            if player_name and player_name.strip():
+                name = player_name.strip()
+                if add_player(name):
+                    st.session_state.player_name = name
+                    st.session_state.joined = True
+                    st.session_state.is_host = False
+                    st.success(f"✅ مرحبا {name}! انضميت للعبة!")
+                    st.rerun()
+                else:
+                    st.error("⚠️ هاد السمية موجودة بالفعل! جرب سمية أخرى")
             else:
-                update_score(name, 100)  # الباقيين كيربحو 100 نقطة
-        st.session_state.scores_updated = True
+                st.error("⚠️ دخل سميتك أولا!")
 
+    with col2:
+        if st.button("👑 انا الـ Host", use_container_width=True):
+            if player_name and player_name.strip():
+                name = player_name.strip()
+                if add_player(name):
+                    st.session_state.player_name = name
+                    st.session_state.joined = True
+                    st.session_state.is_host = True
+                    st.success(f"✅ مرحبا Host {name}!")
+                    st.rerun()
+                else:
+                    st.error("⚠️ هاد السمية موجودة بالفعل!")
+            else:
+                st.error("⚠️ دخل سميتك أولا!")
+
+# ====== GAME LOBBY ======
+else:
+    # Show player card
     st.markdown(f"""
-        <div class="result-card">
-            <span class="sheep-emoji">🐑</span>
-            <div class="winner-label">الخروف ديال النهار هو</div>
-            <div class="winner-name">{st.session_state.winner}</div>
-            <div style="color: #ff4444; font-size: 1rem; margin-top: 10px; font-weight: 700;">
-                ❌ 0 نقاط - الخروف خسر!
-            </div>
-            <div class="punishment-box">
-                <div class="punishment-label">الحكم ديالو:</div>
-                <div class="punishment-text">{st.session_state.punishment}</div>
-            </div>
+        <div class="player-card">
+            <div class="player-name">👤 {st.session_state.player_name}</div>
+            <div class="player-status">{'🎮 لاعب' if not st.session_state.is_host else '👑 Host (كتحكم فاللعبة)'}</div>
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="score-board">', unsafe_allow_html=True)
-    st.markdown(f'<div class="score-title">📊 نقاط الجولة رقم {st.session_state.round_number}</div>', unsafe_allow_html=True)
+    # Show all players
+    data = load_data()
 
-    for name in st.session_state.names:
-        points = 0 if name == st.session_state.winner else 100
-        points_class = "score-points negative" if points == 0 else "score-points"
-        st.markdown(f"""
-            <div class="score-item">
-                <span class="score-name">{name}</span>
-                <span class="{points_class}">{'+' if points > 0 else ''}{points}</span>
+    st.markdown('<div class="score-board">', unsafe_allow_html=True)
+    st.markdown(f'<div class="score-title">👥 اللاعبين ({len(data["players"])})</div>', unsafe_allow_html=True)
+
+    if data["players"]:
+        tags_html = '<div class="names-list">'
+        for name in data["players"]:
+            tags_html += f'<span class="name-tag">{name}</span>'
+        tags_html += '</div>'
+        st.markdown(tags_html, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+            <div style="text-align: center; color: #666666; font-size: 0.9rem;">
+                🔄 مازال ما كاين حتى لاعب...
             </div>
         """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        if st.button("🔄 Replay", key="replay_btn", use_container_width=True):
-            reset_game()
-            st.rerun()
-
-    with col2:
-        if st.button("🆕 لعبة جديدة", key="new_game_btn", use_container_width=True):
-            new_game()
-            st.rerun()
-
-    with col3:
-        if st.button("🗑️ Reset", key="reset_scores_btn", use_container_width=True):
-            reset_all_scores()
-            st.success("✅ تم مسح جميع النقاط!")
-            st.rerun()
-
-    if st.session_state.round_history:
+    # HOST CONTROLS
+    if st.session_state.is_host:
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
         st.markdown("""
-            <div style="text-align: center; color: #666666; font-size: 0.9rem; margin-bottom: 15px;">
-                📜 تاريخ الخرفان
+            <div style="text-align: center; color: #ffd700; font-size: 1.1rem; font-weight: 700; margin-bottom: 20px;">
+                👑 تحكمات الـ Host
             </div>
         """, unsafe_allow_html=True)
 
-        for i, record in enumerate(reversed(st.session_state.round_history[-10:]), 1):
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            if st.button("🔍 شكون هو الخروف؟", use_container_width=True):
+                if len(data["players"]) >= 2:
+                    winner, punishment = pick_sheep()
+                    if winner:
+                        st.success(f"🐑 الخروف هو: {winner}!")
+                        st.rerun()
+                else:
+                    st.error("⚠️ خاص يكونو جوج لاعبين على الأقل!")
+
+        with col2:
+            if st.button("🔄 جولة جديدة", use_container_width=True):
+                reset_round()
+                st.success("✅ جولة جديدة! اللاعبين كيبقاو نفسهم")
+                st.rerun()
+
+        with col3:
+            if st.button("🆕 لعبة جديدة", use_container_width=True):
+                new_game()
+                st.session_state.joined = False
+                st.session_state.player_name = ""
+                st.session_state.is_host = False
+                st.success("✅ لعبة جديدة! كلشي من جديد")
+                st.rerun()
+
+    # SHOW RESULT
+    if data["game_state"] == "result" and data["winner"]:
+        st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+
+        is_sheep = st.session_state.player_name == data["winner"]
+
+        if is_sheep:
             st.markdown(f"""
-                <div style="
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid rgba(255,255,255,0.08);
-                    border-radius: 12px;
-                    padding: 12px 15px;
-                    margin: 8px 0;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                ">
-                    <span style="color: #888888; font-size: 0.8rem;">#{record['round']} {record['time']}</span>
-                    <span style="color: #ffffff; font-weight: 700;">{record['winner']}</span>
-                    <span style="color: #aaaaaa; font-size: 0.85rem;">{record['punishment']}</span>
+                <div class="result-card">
+                    <span class="sheep-emoji">🐑</span>
+                    <div class="winner-label">أنت هو الخروف ديال النهار!</div>
+                    <div class="winner-name">{data["winner"]}</div>
+                    <div style="color: #ff4444; font-size: 1rem; margin-top: 10px; font-weight: 700;">
+                        ❌ 0 نقاط - الخروف خسر!
+                    </div>
+                    <div class="punishment-box">
+                        <div class="punishment-label">الحكم ديالك:</div>
+                        <div class="punishment-text">{data["punishment"]}</div>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+                <div class="result-card">
+                    <span class="sheep-emoji">🏆</span>
+                    <div class="winner-label">الخروف ديال النهار هو</div>
+                    <div class="winner-name">{data["winner"]}</div>
+                    <div style="color: #00ff88; font-size: 1rem; margin-top: 10px; font-weight: 700;">
+                        ⭐ +100 نقطة! ما كنتيش الخروف!
+                    </div>
+                    <div class="punishment-box">
+                        <div class="punishment-label">الحكم ديال {data["winner"]}:</div>
+                        <div class="punishment-text">{data["punishment"]}</div>
+                    </div>
                 </div>
             """, unsafe_allow_html=True)
 
-st.markdown('<div class="footer-text">Made with ❤️ for the Drari | 🐑 Chkoun L-Khrouf?</div>', unsafe_allow_html=True)
+        # Round scores
+        st.markdown('<div class="score-board">', unsafe_allow_html=True)
+        st.markdown(f'<div class="score-title">📊 نقاط الجولة رقم {data["round"]}</div>', unsafe_allow_html=True)
+
+        for name in data["players"]:
+            points = 0 if name == data["winner"] else 100
+            points_class = "score-points negative" if points == 0 else "score-points"
+            st.markdown(f"""
+                <div class="score-item">
+                    <span class="score-name">{name} {'🐑' if name == data["winner"] else '🏆'}</span>
+                    <span class="{points_class}">{'+' if points > 0 else ''}{points}</span>
+                </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Waiting message for non-host
+    elif not st.session_state.is_host and data["game_state"] == "waiting":
+        st.markdown("""
+            <div class="waiting-text">
+                ⏳ كنتظرو الـ Host باش يبدأ اللعبة...
+                <br>
+                <span style="font-size: 0.8rem;">كليك على الزر اللي فوق باش تشوف التحديثات</span>
+            </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("🔄 تحديث", use_container_width=True):
+            st.rerun()
+
+st.markdown('<div class="footer-text">Made with ❤️ for the Drari | 🐑 Chkoun L-Khrouf? Multiplayer</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
