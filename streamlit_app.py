@@ -4,16 +4,17 @@ import random
 from datetime import datetime
 import json
 import os
+import time
 
 # Page configuration
 st.set_page_config(
-    page_title="Chkoun L-Khrouf? - Multiplayer",
+    page_title="Chkoun L-Khrouf? - ULTIMATE",
     page_icon="🐑",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS
+# ULTIMATE CSS with animations, effects, glows
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
@@ -38,164 +39,214 @@ st.markdown("""
         padding: 20px;
     }
 
+    /* Animated title with glow */
     .game-title {
         text-align: center;
-        font-size: clamp(2rem, 8vw, 3.5rem);
+        font-size: clamp(2.5rem, 10vw, 4rem);
         font-weight: 900;
         color: #ffffff;
         margin-bottom: 10px;
-        text-shadow: 0 0 30px rgba(255,255,255,0.1);
-        letter-spacing: 1px;
+        text-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1);
+        letter-spacing: 2px;
+        animation: titleGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+        0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1); }
+        50% { text-shadow: 0 0 30px rgba(255,255,255,0.5), 0 0 60px rgba(255,255,255,0.2), 0 0 80px rgba(255,215,0,0.1); }
     }
 
     .game-subtitle {
         text-align: center;
-        font-size: clamp(0.9rem, 3vw, 1.2rem);
+        font-size: clamp(1rem, 3vw, 1.3rem);
         color: #888888;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         font-weight: 400;
+        animation: fadeIn 2s ease-out;
     }
 
-    .stTextInput > div > div > input {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border: 2px solid #333333 !important;
-        border-radius: 16px !important;
-        padding: 16px 20px !important;
-        font-size: 1.1rem !important;
-        text-align: right !important;
-        transition: all 0.3s ease !important;
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    .stTextInput > div > div > input:focus {
-        border-color: #ffffff !important;
-        box-shadow: 0 0 20px rgba(255,255,255,0.1) !important;
-    }
-
-    .stTextInput > div > div > input::placeholder {
-        color: #666666 !important;
-    }
-
-    .stTextInput > label {
-        color: #cccccc !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        text-align: right !important;
-        display: block !important;
-        margin-bottom: 8px !important;
-    }
-
+    /* Neon button */
     .stButton > button {
         width: 100%;
         background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%) !important;
         color: #000000 !important;
         border: none !important;
         border-radius: 16px !important;
-        padding: 18px 30px !important;
-        font-size: 1.2rem !important;
-        font-weight: 700 !important;
+        padding: 20px 35px !important;
+        font-size: 1.3rem !important;
+        font-weight: 900 !important;
         cursor: pointer !important;
         transition: all 0.3s ease !important;
         text-transform: none !important;
         margin-top: 20px !important;
-        box-shadow: 0 4px 20px rgba(255,255,255,0.15) !important;
+        box-shadow: 0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.1) !important;
+        animation: buttonPulse 2s ease-in-out infinite;
     }
 
     .stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 30px rgba(255,255,255,0.25) !important;
-        background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%) !important;
+        transform: translateY(-3px) scale(1.02) !important;
+        box-shadow: 0 0 30px rgba(255,255,255,0.4), 0 0 60px rgba(255,215,0,0.2) !important;
+        background: linear-gradient(135deg, #ffd700 0%, #ffffff 100%) !important;
     }
 
+    @keyframes buttonPulse {
+        0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        50% { box-shadow: 0 0 30px rgba(255,255,255,0.4), 0 0 50px rgba(255,215,0,0.15); }
+    }
+
+    /* Input with neon border */
+    .stTextInput > div > div > input {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border: 2px solid #333333 !important;
+        border-radius: 16px !important;
+        padding: 18px 22px !important;
+        font-size: 1.2rem !important;
+        text-align: right !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+    }
+
+    .stTextInput > div > div > input:focus {
+        border-color: #ffd700 !important;
+        box-shadow: 0 0 20px rgba(255,215,0,0.3), 0 0 40px rgba(255,215,0,0.1) !important;
+    }
+
+    .stTextInput > div > div > input::placeholder {
+        color: #555555 !important;
+    }
+
+    .stTextInput > label {
+        color: #cccccc !important;
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        text-align: right !important;
+        display: block !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* Result card with epic animation */
     .result-card {
         background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
-        border: 1px solid #333333;
+        border: 2px solid #ffd700;
         border-radius: 24px;
         padding: 40px 30px;
         text-align: center;
         margin: 30px 0;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        animation: fadeInUp 0.6s ease-out;
+        box-shadow: 0 0 30px rgba(255,215,0,0.2), 0 0 60px rgba(255,215,0,0.1);
+        animation: epicEntrance 1s ease-out, borderGlow 2s ease-in-out infinite;
     }
 
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes epicEntrance {
+        0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+        50% { transform: scale(1.05) rotate(2deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0); }
+    }
+
+    @keyframes borderGlow {
+        0%, 100% { box-shadow: 0 0 30px rgba(255,215,0,0.2); border-color: #ffd700; }
+        50% { box-shadow: 0 0 50px rgba(255,215,0,0.4), 0 0 80px rgba(255,215,0,0.2); border-color: #ffffff; }
     }
 
     .winner-name {
-        font-size: clamp(2.5rem, 10vw, 4.5rem);
+        font-size: clamp(3rem, 12vw, 5rem);
         font-weight: 900;
-        color: #ffffff;
+        color: #ffd700;
         margin: 20px 0;
-        text-shadow: 0 0 40px rgba(255,255,255,0.2);
+        text-shadow: 0 0 30px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.3);
         line-height: 1.2;
         word-break: break-word;
+        animation: winnerPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes winnerPulse {
+        0%, 100% { transform: scale(1); text-shadow: 0 0 30px rgba(255,215,0,0.5); }
+        50% { transform: scale(1.05); text-shadow: 0 0 50px rgba(255,215,0,0.8), 0 0 80px rgba(255,215,0,0.4); }
     }
 
     .winner-label {
-        font-size: 1rem;
+        font-size: 1.2rem;
         color: #888888;
-        margin-bottom: 10px;
-        letter-spacing: 3px;
+        margin-bottom: 15px;
+        letter-spacing: 4px;
         text-transform: uppercase;
+        animation: fadeInUp 1s ease-out 0.5s both;
     }
 
+    /* Punishment box with style */
     .punishment-box {
-        background: rgba(255,255,255,0.05);
-        border-radius: 16px;
-        padding: 20px;
-        margin-top: 25px;
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,215,0,0.05);
+        border-radius: 20px;
+        padding: 25px;
+        margin-top: 30px;
+        border: 1px solid rgba(255,215,0,0.3);
+        animation: fadeInUp 1s ease-out 1s both;
     }
 
     .punishment-label {
-        font-size: 0.9rem;
+        font-size: 1rem;
         color: #666666;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
 
     .punishment-text {
-        font-size: clamp(1.3rem, 5vw, 1.8rem);
+        font-size: clamp(1.5rem, 5vw, 2rem);
         color: #ffffff;
-        font-weight: 700;
+        font-weight: 900;
         margin: 0;
+        text-shadow: 0 0 20px rgba(255,255,255,0.2);
     }
 
+    /* Sheep animation */
     .sheep-emoji {
-        font-size: clamp(3rem, 10vw, 5rem);
-        margin-bottom: 10px;
+        font-size: clamp(4rem, 12vw, 6rem);
+        margin-bottom: 15px;
         display: block;
-        animation: bounce 2s infinite;
+        animation: sheepDance 1s ease-in-out infinite;
     }
 
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+    @keyframes sheepDance {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        25% { transform: translateY(-15px) rotate(-5deg); }
+        50% { transform: translateY(0) rotate(0deg); }
+        75% { transform: translateY(-10px) rotate(5deg); }
     }
 
+    /* Names list */
     .names-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
         justify-content: center;
         margin: 20px 0;
-        padding: 15px;
+        padding: 20px;
         background: rgba(255,255,255,0.03);
-        border-radius: 12px;
+        border-radius: 16px;
         border: 1px solid rgba(255,255,255,0.08);
     }
 
     .name-tag {
-        background: rgba(255,255,255,0.1);
-        color: #ffffff;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(255,215,0,0.15);
+        color: #ffd700;
+        padding: 8px 16px;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 700;
+        border: 1px solid rgba(255,215,0,0.3);
+        animation: tagGlow 2s ease-in-out infinite;
     }
 
+    @keyframes tagGlow {
+        0%, 100% { box-shadow: 0 0 5px rgba(255,215,0,0.2); }
+        50% { box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+    }
+
+    /* Score board */
     .score-board {
         background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
         border: 1px solid #333333;
@@ -207,126 +258,195 @@ st.markdown("""
 
     .score-title {
         text-align: center;
-        font-size: 1.3rem;
-        font-weight: 700;
+        font-size: 1.4rem;
+        font-weight: 900;
         color: #ffffff;
         margin-bottom: 20px;
+        text-shadow: 0 0 10px rgba(255,255,255,0.2);
     }
 
     .score-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 15px;
-        margin: 8px 0;
+        padding: 14px 18px;
+        margin: 10px 0;
         background: rgba(255,255,255,0.03);
-        border-radius: 12px;
+        border-radius: 14px;
         border: 1px solid rgba(255,255,255,0.06);
+        transition: all 0.3s ease;
+    }
+
+    .score-item:hover {
+        background: rgba(255,255,255,0.06);
+        transform: translateX(-5px);
+        border-color: rgba(255,215,0,0.2);
     }
 
     .score-name {
         color: #ffffff;
-        font-weight: 600;
-        font-size: 1rem;
+        font-weight: 700;
+        font-size: 1.1rem;
     }
 
     .score-points {
         color: #00ff88;
         font-weight: 900;
-        font-size: 1.2rem;
-        text-shadow: 0 0 10px rgba(0,255,136,0.3);
+        font-size: 1.3rem;
+        text-shadow: 0 0 15px rgba(0,255,136,0.4);
     }
 
     .score-points.negative {
         color: #ff4444;
-        text-shadow: 0 0 10px rgba(255,68,68,0.3);
+        text-shadow: 0 0 15px rgba(255,68,68,0.4);
     }
 
-    .divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #333333, transparent);
-        margin: 30px 0;
-    }
-
-    .footer-text {
-        text-align: center;
-        color: #444444;
-        font-size: 0.8rem;
-        margin-top: 40px;
-    }
-
-    .online-section {
-        background: rgba(255,255,255,0.02);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 16px;
-        padding: 20px;
-        margin: 20px 0;
-    }
-
-    .online-title {
-        color: #ffffff;
-        font-size: 1.1rem;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 15px;
-    }
-
-    .url-display {
-        background: #1a1a1a;
-        border: 2px solid #333333;
-        border-radius: 12px;
-        padding: 12px 15px;
-        color: #00ff88;
-        font-family: monospace;
-        font-size: 0.85rem;
-        word-break: break-all;
-        text-align: center;
-        margin: 10px 0;
-    }
-
+    /* Player card */
     .player-card {
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 16px;
-        padding: 20px;
-        margin: 10px 0;
+        background: rgba(255,215,0,0.05);
+        border: 2px solid rgba(255,215,0,0.2);
+        border-radius: 20px;
+        padding: 25px;
+        margin: 15px 0;
         text-align: center;
+        animation: cardGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes cardGlow {
+        0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.1); }
+        50% { box-shadow: 0 0 40px rgba(255,215,0,0.2); }
     }
 
     .player-name {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #ffffff;
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #ffd700;
+        text-shadow: 0 0 20px rgba(255,215,0,0.3);
     }
 
     .player-status {
-        font-size: 0.9rem;
+        font-size: 1rem;
         color: #888888;
-        margin-top: 5px;
+        margin-top: 8px;
     }
 
     .host-badge {
         background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
         color: #000000;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
+        padding: 6px 16px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 900;
         display: inline-block;
-        margin-top: 10px;
+        margin-top: 12px;
+        box-shadow: 0 0 15px rgba(255,215,0,0.4);
     }
 
+    /* Waiting animation */
     .waiting-text {
         text-align: center;
         color: #666666;
-        font-size: 1rem;
-        margin: 20px 0;
+        font-size: 1.1rem;
+        margin: 25px 0;
         animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
         0%, 100% { opacity: 0.5; }
         50% { opacity: 1; }
+    }
+
+    /* Divider */
+    .divider {
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #ffd700, #ffffff, #ffd700, transparent);
+        margin: 30px 0;
+        box-shadow: 0 0 10px rgba(255,215,0,0.3);
+    }
+
+    /* Footer */
+    .footer-text {
+        text-align: center;
+        color: #444444;
+        font-size: 0.9rem;
+        margin-top: 40px;
+    }
+
+    /* Online section */
+    .online-section {
+        background: rgba(255,215,0,0.03);
+        border: 2px solid rgba(255,215,0,0.15);
+        border-radius: 20px;
+        padding: 25px;
+        margin: 20px 0;
+        animation: sectionGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes sectionGlow {
+        0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.05); }
+        50% { box-shadow: 0 0 40px rgba(255,215,0,0.15); }
+    }
+
+    .online-title {
+        color: #ffd700;
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(255,215,0,0.3);
+    }
+
+    .url-display {
+        background: #1a1a1a;
+        border: 2px solid #ffd700;
+        border-radius: 14px;
+        padding: 14px 18px;
+        color: #ffd700;
+        font-family: monospace;
+        font-size: 0.9rem;
+        word-break: break-all;
+        text-align: center;
+        margin: 10px 0;
+        box-shadow: 0 0 20px rgba(255,215,0,0.2);
+    }
+
+    /* Countdown timer */
+    .timer {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #ffd700;
+        text-align: center;
+        text-shadow: 0 0 30px rgba(255,215,0,0.5);
+        animation: timerPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes timerPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    /* Confetti effect (CSS only) */
+    .confetti-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+        overflow: hidden;
+    }
+
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        animation: confettiFall 3s linear infinite;
+    }
+
+    @keyframes confettiFall {
+        0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
 
     @media (max-width: 480px) {
@@ -336,17 +456,19 @@ st.markdown("""
     }
 
     .stSuccess {
-        background: rgba(255,255,255,0.05) !important;
-        border: 1px solid rgba(255,255,255,0.1) !important;
-        color: #ffffff !important;
-        border-radius: 12px !important;
+        background: rgba(0,255,136,0.1) !important;
+        border: 1px solid rgba(0,255,136,0.3) !important;
+        color: #00ff88 !important;
+        border-radius: 14px !important;
+        font-weight: 700 !important;
     }
 
     .stError {
         background: rgba(255,50,50,0.1) !important;
-        border: 1px solid rgba(255,50,50,0.2) !important;
+        border: 1px solid rgba(255,50,50,0.3) !important;
         color: #ff6666 !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
+        font-weight: 700 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -519,15 +641,15 @@ def load_data():
             with open(DATA_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except:
-            return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0}
-    return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0}
+            return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []}
+    return {"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []}
 
 def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def reset_game_data():
-    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0})
+    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []})
 
 def add_player(name):
     data = load_data()
@@ -536,6 +658,20 @@ def add_player(name):
         save_data(data)
         return True
     return False
+
+def add_chat_message(name, message):
+    data = load_data()
+    data["chat"].append({
+        "name": name,
+        "message": message,
+        "time": datetime.now().strftime("%H:%M:%S")
+    })
+    data["chat"] = data["chat"][-50:]  # Keep last 50 messages
+    save_data(data)
+
+def get_chat():
+    data = load_data()
+    return data["chat"]
 
 def pick_sheep():
     data = load_data()
@@ -556,36 +692,59 @@ def reset_round():
     save_data(data)
 
 def new_game():
-    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0})
+    save_data({"players": [], "game_state": "waiting", "winner": None, "punishment": None, "round": 0, "chat": []})
 
-# Initialize session state for UI
+# Initialize session state
 if 'player_name' not in st.session_state:
     st.session_state.player_name = ""
 if 'is_host' not in st.session_state:
     st.session_state.is_host = False
 if 'joined' not in st.session_state:
     st.session_state.joined = False
+if 'show_confetti' not in st.session_state:
+    st.session_state.show_confetti = False
 
 # Main container
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-# Title
+# Title with animation
 st.markdown('<div class="game-title">🐑 Chkoun L-Khrouf?</div>', unsafe_allow_html=True)
-st.markdown('<div class="game-subtitle">كل واحد يدخل سميتو من تليفونو ونتوما تلعبو!</div>', unsafe_allow_html=True)
+st.markdown('<div class="game-subtitle">🎮 اللعبة اللي كتخلص الدراري يضحكو ويتسناو!</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# Show current URL for sharing
+# Confetti effect when result shown
 data = load_data()
+if data["game_state"] == "result" and data["winner"]:
+    st.markdown("""
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden;">
+            <div style="position: absolute; width: 10px; height: 10px; background: #ffd700; left: 10%; animation: confettiFall 3s linear infinite;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #ff4444; left: 20%; animation: confettiFall 2.5s linear infinite 0.5s;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #00ff88; left: 30%; animation: confettiFall 3.5s linear infinite 1s;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #ffd700; left: 40%; animation: confettiFall 2s linear infinite 0.3s;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #ff6b6b; left: 50%; animation: confettiFall 3s linear infinite 0.8s;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #4ecdc4; left: 60%; animation: confettiFall 2.8s linear infinite 0.2s;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #ffd700; left: 70%; animation: confettiFall 3.2s linear infinite 1.2s;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #ff4444; left: 80%; animation: confettiFall 2.3s linear infinite 0.6s;"></div>
+            <div style="position: absolute; width: 10px; height: 10px; background: #00ff88; left: 90%; animation: confettiFall 3.8s linear infinite 0.4s;"></div>
+        </div>
+        <style>
+            @keyframes confettiFall {
+                0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+                100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
+# Show current URL for sharing
 st.markdown('<div class="online-section">', unsafe_allow_html=True)
 st.markdown('<div class="online-title">🔗 شارك هاد الرابط مع الدراري</div>', unsafe_allow_html=True)
 st.markdown("""
     <div class="url-display">
         https://blank-app-py3yziqwt6f5ajvmubjdso.streamlit.app
     </div>
-    <div style="color: #666666; font-size: 0.8rem; text-align: center; margin-top: 10px;">
-        💡 كل واحد يفتح هاد الرابط فتليفونو ويدخل سميتو
+    <div style="color: #666666; font-size: 0.85rem; text-align: center; margin-top: 10px;">
+        💡 كل واحد يفتح هاد الرابط فتليفونو ويدخل سميتو!
     </div>
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
@@ -595,7 +754,7 @@ st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 # ====== JOIN GAME ======
 if not st.session_state.joined:
     st.markdown("""
-        <div style="text-align: right; color: #cccccc; font-size: 1rem; margin-bottom: 20px; font-weight: 600;">
+        <div style="text-align: right; color: #cccccc; font-size: 1.1rem; margin-bottom: 20px; font-weight: 700;">
             📝 دخل سميتك باش تلتحق باللعبة:
         </div>
     """, unsafe_allow_html=True)
@@ -620,7 +779,7 @@ if not st.session_state.joined:
                     st.success(f"✅ مرحبا {name}! انضميت للعبة!")
                     st.rerun()
                 else:
-                    st.error("⚠️ هاد السمية موجودة بالفعل! جرب سمية أخرى")
+                    st.error("⚠️ هاد السمية موجودة! جرب سمية أخرى")
             else:
                 st.error("⚠️ دخل سميتك أولا!")
 
@@ -635,7 +794,7 @@ if not st.session_state.joined:
                     st.success(f"✅ مرحبا Host {name}!")
                     st.rerun()
                 else:
-                    st.error("⚠️ هاد السمية موجودة بالفعل!")
+                    st.error("⚠️ هاد السمية موجودة!")
             else:
                 st.error("⚠️ دخل سميتك أولا!")
 
@@ -645,7 +804,8 @@ else:
     st.markdown(f"""
         <div class="player-card">
             <div class="player-name">👤 {st.session_state.player_name}</div>
-            <div class="player-status">{'🎮 لاعب' if not st.session_state.is_host else '👑 Host (كتحكم فاللعبة)'}</div>
+            <div class="player-status">{'🎮 لاعب' if not st.session_state.is_host else '👑 Host - كتحكم فاللعبة'}</div>
+            {f'<div class="host-badge">HOST</div>' if st.session_state.is_host else ''}
         </div>
     """, unsafe_allow_html=True)
 
@@ -670,11 +830,45 @@ else:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+    # CHAT SECTION
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="score-title">💬 شات الدراري</div>', unsafe_allow_html=True)
+
+    chat_messages = get_chat()
+    if chat_messages:
+        for msg in reversed(chat_messages[-10:]):
+            st.markdown(f"""
+                <div style="
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid rgba(255,255,255,0.08);
+                    border-radius: 12px;
+                    padding: 10px 15px;
+                    margin: 5px 0;
+                ">
+                    <span style="color: #ffd700; font-weight: 700;">{msg['name']}</span>
+                    <span style="color: #888888; font-size: 0.8rem;">({msg['time']})</span>
+                    <div style="color: #ffffff; margin-top: 3px;">{msg['message']}</div>
+                </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+            <div style="text-align: center; color: #555555; font-size: 0.9rem; padding: 20px;">
+                💬 مازال ما كاين حتى رسالة... بدا انت!
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Chat input
+    chat_input = st.text_input("💬 بعت رسالة:", placeholder="كتب شي حاجة...", key="chat_input")
+    if st.button("📨 بعت", use_container_width=True):
+        if chat_input and chat_input.strip():
+            add_chat_message(st.session_state.player_name, chat_input.strip())
+            st.rerun()
+
     # HOST CONTROLS
     if st.session_state.is_host:
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
         st.markdown("""
-            <div style="text-align: center; color: #ffd700; font-size: 1.1rem; font-weight: 700; margin-bottom: 20px;">
+            <div style="text-align: center; color: #ffd700; font-size: 1.2rem; font-weight: 900; margin-bottom: 20px;">
                 👑 تحكمات الـ Host
             </div>
         """, unsafe_allow_html=True)
@@ -694,7 +888,7 @@ else:
         with col2:
             if st.button("🔄 جولة جديدة", use_container_width=True):
                 reset_round()
-                st.success("✅ جولة جديدة! اللاعبين كيبقاو نفسهم")
+                st.success("✅ جولة جديدة!")
                 st.rerun()
 
         with col3:
@@ -703,7 +897,7 @@ else:
                 st.session_state.joined = False
                 st.session_state.player_name = ""
                 st.session_state.is_host = False
-                st.success("✅ لعبة جديدة! كلشي من جديد")
+                st.success("✅ لعبة جديدة!")
                 st.rerun()
 
     # SHOW RESULT
@@ -718,7 +912,7 @@ else:
                     <span class="sheep-emoji">🐑</span>
                     <div class="winner-label">أنت هو الخروف ديال النهار!</div>
                     <div class="winner-name">{data["winner"]}</div>
-                    <div style="color: #ff4444; font-size: 1rem; margin-top: 10px; font-weight: 700;">
+                    <div style="color: #ff4444; font-size: 1.2rem; margin-top: 15px; font-weight: 900;">
                         ❌ 0 نقاط - الخروف خسر!
                     </div>
                     <div class="punishment-box">
@@ -733,7 +927,7 @@ else:
                     <span class="sheep-emoji">🏆</span>
                     <div class="winner-label">الخروف ديال النهار هو</div>
                     <div class="winner-name">{data["winner"]}</div>
-                    <div style="color: #00ff88; font-size: 1rem; margin-top: 10px; font-weight: 700;">
+                    <div style="color: #00ff88; font-size: 1.2rem; margin-top: 15px; font-weight: 900;">
                         ⭐ +100 نقطة! ما كنتيش الخروف!
                     </div>
                     <div class="punishment-box">
@@ -745,7 +939,7 @@ else:
 
         # Round scores
         st.markdown('<div class="score-board">', unsafe_allow_html=True)
-        st.markdown(f'<div class="score-title">📊 نقاط الجولة رقم {data["round"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="score-title">📊 نقاط الجولة رقم {data["round"]} - واو!</div>', unsafe_allow_html=True)
 
         for name in data["players"]:
             points = 0 if name == data["winner"] else 100
@@ -765,12 +959,12 @@ else:
             <div class="waiting-text">
                 ⏳ كنتظرو الـ Host باش يبدأ اللعبة...
                 <br>
-                <span style="font-size: 0.8rem;">كليك على الزر اللي فوق باش تشوف التحديثات</span>
+                <span style="font-size: 0.85rem;">💬 تقدر تكتب فالشات فاللي فوق!</span>
             </div>
         """, unsafe_allow_html=True)
 
         if st.button("🔄 تحديث", use_container_width=True):
             st.rerun()
 
-st.markdown('<div class="footer-text">Made with ❤️ for the Drari | 🐑 Chkoun L-Khrouf? Multiplayer</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer-text">🔥 Made with ❤️ for the Drari | 🐑 Chkoun L-Khrouf? ULTIMATE 🔥</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
